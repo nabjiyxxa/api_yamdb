@@ -8,22 +8,19 @@ CINEMATOGRAPHY_CREATION_YEAR = 1895
 
 def validate_year(value):
     """
-    Валидатор для проверки введенного года выпуска произведения.
+    Валидатор для проверки года
     """
     year_now = datetime.now().year
     if year_now >= value >= CINEMATOGRAPHY_CREATION_YEAR:
         return value
     else:
         raise ValidationError(
-            f'Год выпуска произведения {value} не может быть больше '
-            f'настоящего года {year_now}, либо меньше даты '
+            f'Год выпуска произведения {value} не может быть позже '
+            f'настоящего года {year_now}, и раньше даты '
             f'создания произведение "{CINEMATOGRAPHY_CREATION_YEAR}"г.'
-            'Проверьте введеные данные.'
         )
 
 class Title(models.Model):
-    # нужен ли primary_key=True
-    # id = models.AutoField(primary_key=True)
     name = models.CharField(
         'Название произведения',
         max_length=256,
@@ -51,7 +48,8 @@ class Title(models.Model):
     genre = models.ManyToManyField(
         Genre, # зе сейм
         blank=True,
-        related_name='genres'
+        related_name='genres',
+        verbose_name='Жанр'
     )
 
     class Meta:
