@@ -31,7 +31,7 @@ class Title(models.Model):
     )
     year = models.IntegerField(
         'Год выхода',
-        validators=[datetime.now().year],
+        validators=[validate_year],
         null=True
     )
     description = models.CharField(
