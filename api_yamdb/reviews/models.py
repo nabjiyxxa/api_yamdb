@@ -17,7 +17,7 @@ def validate_year(value):
         raise ValidationError(
             f'Год выпуска произведения {value} не может быть больше '
             f'настоящего года {year_now}, либо меньше даты '
-            f'создания кинематографа "{CINEMATOGRAPHY_CREATION_YEAR}"г.'
+            f'создания произведение "{CINEMATOGRAPHY_CREATION_YEAR}"г.'
             'Проверьте введеные данные.'
         )
 
