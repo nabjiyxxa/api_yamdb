@@ -47,7 +47,3 @@ class User(AbstractUser):
                 name='unique_user'
             )
         ]
-
-
-User = get_user_model()
-
