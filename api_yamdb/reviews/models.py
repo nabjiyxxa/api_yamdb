@@ -110,3 +110,4 @@ class Review(models.Model):
             self.title,
             self.text
         )
+

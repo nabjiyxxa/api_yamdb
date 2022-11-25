@@ -25,3 +25,4 @@ class ReviewViewSet(viewsets.ModelViewSet):
             author=self.request.user,
             title=self.get_title()
         )
+
