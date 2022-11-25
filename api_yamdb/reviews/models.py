@@ -4,10 +4,11 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 
 from datetime import datetime
 
-from users.models import User
+from django.conf import settings
 
 
 CINEMATOGRAPHY_CREATION_YEAR = 1895
+
 
 def validate_year(value):
     """
@@ -22,8 +23,8 @@ def validate_year(value):
             f'настоящего года {year_now}, и раньше даты '
             f'создания произведение "{CINEMATOGRAPHY_CREATION_YEAR}"г.'
         )
-        
-        
+
+
 class Title(models.Model):
     name = models.CharField(
         'Название произведения',
@@ -73,7 +74,7 @@ class Review(models.Model):
         'отзыв: {:.15}'
     )
     author = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='reviews',
         verbose_name='Автор отзыва'
@@ -108,5 +109,45 @@ class Review(models.Model):
             self.pub_date,
             self.author.username,
             self.title,
+            self.text
+        )
+
+
+class Comment(models.Model):
+    MESSAGE_FORM = (
+        'Дата публикации: {}, '
+        'автор: {}, '
+        'отзыв: {}, '
+        'комментарий: {:.15}'
+    )
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='comments',
+        verbose_name='Автор комментария'
+    )
+    review = models.ForeignKey(
+        Review,
+        on_delete=models.CASCADE,
+        related_name='comments',
+        verbose_name='Отзыв'
+    )
+    text = models.TextField()
+    pub_date = models.DateTimeField(
+        'Дата публикации',
+        auto_now_add=True,
+        db_index=True
+    )
+
+    class Meta:
+        ordering = ['-pub_date']
+        verbose_name = 'Комментарий'
+        verbose_name_plural = 'Комментарии'
+
+    def __str__(self):
+        return self.MESSAGE_FORM.format(
+            self.pub_date,
+            self.author.username,
+            self.review,
             self.text
         )
