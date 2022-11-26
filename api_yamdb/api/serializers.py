@@ -1,11 +1,27 @@
 from rest_framework import serializers
-
+from reviews.models import Category, Comment, Genre, Review, Title
 from reviews.models import Review
 
 
 SCORE_ERROR = 'Оценка должна быть целым числом в пределах от 1 до 10!'
 MAX_VALUE_SCORE_VALIDATOR = 10
 MIN_VALUE_SCORE_VALIDATOR = 1
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    """Сериализатор для модели Категории."""
+
+    class Meta:
+        model = Category
+        fields = ('name', 'slug')
+
+
+class GenreSerializer(serializers.ModelSerializer):
+    """Сериализатор для модели Жанры."""
+
+    class Meta:
+        model = Genre
+        fields = ('name', 'slug')
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -37,4 +53,4 @@ class CommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         fields = ('id', 'text', 'author', 'pub_date')
-        model = Review
+        model = Comment
