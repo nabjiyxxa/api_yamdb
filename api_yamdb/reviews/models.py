@@ -40,6 +40,7 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+
 class Genre(models.Model):
     name = models.CharField(
         'Жанр',
@@ -54,6 +55,7 @@ class Genre(models.Model):
 
     def __str__(self):
         return self.name
+
 
 class Title(models.Model):
     name = models.CharField(
@@ -88,7 +90,7 @@ class Title(models.Model):
     )
 
     class Meta:
-        #ordering = ['-id'] не id другое 
+        # ordering = ['-id'] не id другое
         verbose_name = "Произведение"
         verbose_name_plural = "Произведения"
 
@@ -181,4 +183,3 @@ class Comment(models.Model):
             self.review,
             self.text
         )
-

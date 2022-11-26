@@ -3,9 +3,10 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import status
 
-from reviews.models import Title, Review
+from reviews.models import Title, Review, Category, Genre
 
-from .serializers import ReviewSerializer, CommentSerializer
+from .serializers import (ReviewSerializer, CommentSerializer,
+                          CategorySerializer, GenreSerializer, TitleSerializer)
 from .permissions import IsAuthorOrReadOnly
 
 

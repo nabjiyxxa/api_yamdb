@@ -8,6 +8,14 @@ MAX_VALUE_SCORE_VALIDATOR = 10
 MIN_VALUE_SCORE_VALIDATOR = 1
 
 
+class TitlesSerializer:
+    """Сериализатор для модели Произведения."""
+
+    class Meta:
+        model = Title
+        fields = ()
+
+
 class CategorySerializer(serializers.ModelSerializer):
     """Сериализатор для модели Категории."""
 
