@@ -33,7 +33,7 @@ class IsAdminOrReadOnly(permissions.BasePermission):
         )
 
 
-class IsAdminOrStaffPermission(permissions.BasePermission):
+class IsAdminPermission(permissions.BasePermission):
 
     def has_permission(self, request, view):
         return (
