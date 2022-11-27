@@ -1,13 +1,37 @@
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, status
+from rest_framework.response import Response
 
-from reviews.models import Title, Review
+from reviews.models import Title, Review, Category, Genre
 
 from .serializers import (ReviewSerializer, CommentSerializer,
-                          TitleReadSerializer, TitleWriteSerializer)
+                          TitleReadSerializer, TitleWriteSerializer,
+                          CategorySerializer, GenreSerializer)
 from .permissions import (IsAuthorAdminModeratorOrReadOnly,
-                          IsAdminOrReadOnly, IsAuthenticatedOrReadOnly)
+                          IsAdminOrReadOnly, IsAuthenticatedOrReadOnly,
+                          IsAuthorOrReadOnly)
+
+
+class CategoryViewSet(viewsets.ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = (IsAuthorOrReadOnly)
+    search_fields = ('=name')
+    lookup_field = 'slug'
+    # pagination_class = 10
+
+
+class GenreViewSet(viewsets.ModelViewSet):
+    queryset = Genre.objects.all()
+    serializer_class = GenreSerializer
+    permission_classes = (IsAuthorOrReadOnly)
+    search_fields = ('=name')
+    lookup_field = 'slug'
+    # pagination_class = 10
+
+    # def retrieve(self, request, *args, **kwargs):
+    #    return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 class TitleViewSet(viewsets.ModelViewSet):
@@ -18,6 +42,16 @@ class TitleViewSet(viewsets.ModelViewSet):
         if self.request.method in permissions.SAFE_METHODS:
             return TitleReadSerializer
         return TitleWriteSerializer
+
+
+# class TitleViewSet(viewsets.ModelViewSet):
+#     queryset = Title.objects.all()
+#     permission_classes = (IsAuthorOrReadOnly)
+#     serializer_class = TitleSerializer
+#     # pagination_class = 10
+
+#     def update(self, request, *args, **kwargs):
+#         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 class ReviewViewSet(viewsets.ModelViewSet):

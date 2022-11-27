@@ -7,7 +7,7 @@ from datetime import datetime
 from django.conf import settings
 
 
-CINEMATOGRAPHY_CREATION_YEAR = 1895
+CREATION_YEAR = 1895
 
 
 def validate_year(value):
@@ -15,14 +15,46 @@ def validate_year(value):
     Валидатор для проверки года
     """
     year_now = datetime.now().year
-    if year_now >= value >= CINEMATOGRAPHY_CREATION_YEAR:
+    if year_now >= value >= CREATION_YEAR:
         return value
     else:
         raise ValidationError(
             f'Год выпуска произведения {value} не может быть позже '
             f'настоящего года {year_now}, и раньше даты '
-            f'создания произведение "{CINEMATOGRAPHY_CREATION_YEAR}"г.'
+            f'создания произведение "{CREATION_YEAR}"г.'
         )
+
+
+class Category(models.Model):
+    name = models.CharField(
+        'Категория',
+        max_length=256,
+    )
+    slug = models.SlugField('Категория слаг', unique=True, max_length=50)
+
+    class Meta:
+        verbose_name = 'Категория'
+        verbose_name_plural = 'Категории'
+        # ordering = ('name',)
+
+    def __str__(self):
+        return self.name
+
+
+class Genre(models.Model):
+    name = models.CharField(
+        'Жанр',
+        max_length=256,
+    )
+    slug = models.SlugField('Жанр слаг', unique=True, max_length=50)
+
+    class Meta:
+        verbose_name = 'Жанр'
+        verbose_name_plural = 'Жанры'
+        # ordering = ('name',)
+
+    def __str__(self):
+        return self.name
 
 
 class Title(models.Model):
@@ -43,7 +75,7 @@ class Title(models.Model):
         null=True
     )
     category = models.ForeignKey(
-        Category, # создам модель категорий
+        Category,
         on_delete=models.SET_NULL,
         related_name='category',
         null=True,
@@ -51,13 +83,14 @@ class Title(models.Model):
         verbose_name='Категория произведения'
     )
     genre = models.ManyToManyField(
-        Genre, # зе сейм
+        Genre,
         blank=True,
         related_name='genres',
         verbose_name='Жанр'
     )
 
     class Meta:
+        # ordering = ['-id'] не id другое
         verbose_name = "Произведение"
         verbose_name_plural = "Произведения"
 
