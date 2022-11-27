@@ -8,7 +8,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from .models import User
 from .serializers import TokenSerializer, UserSingUpSerializer, UserSerializer
 from .utils import generate_confirmation_code
-from api.permissions import IsAdminOrStaffPermission, IsUserPermission
+from api.permissions import IsAdminPermission, IsUserPermission
 
 
 @api_view(['POST'])
@@ -69,7 +69,7 @@ def get_user_token(request):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = (IsAdminOrStaffPermission,)
+    permission_classes = (IsAdminPermission,)
     search_fields = ('=username',)
     lookup_field = 'username'
 
