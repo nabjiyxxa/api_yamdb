@@ -1,15 +1,31 @@
+from django.db.models import Avg
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets
+from rest_framework import viewsets, permissions
 
 from reviews.models import Title, Review
 
-from .serializers import ReviewSerializer, CommentSerializer
-from .permissions import IsAuthorOrReadOnly
+from .serializers import (ReviewSerializer, CommentSerializer,
+                          TitleReadSerializer, TitleWriteSerializer)
+from .permissions import (IsAuthorAdminModeratorOrReadOnly,
+                          IsAdminOrReadOnly, IsAuthenticatedOrReadOnly)
+
+
+class TitleViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAdminOrReadOnly,)
+    queryset = Title.objects.all().annotate(rating=Avg('reviews__score'))
+
+    def get_serializer_class(self):
+        if self.request.method in permissions.SAFE_METHODS:
+            return TitleReadSerializer
+        return TitleWriteSerializer
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
-    permission_classes = (IsAuthorOrReadOnly,)
+    permission_classes = (
+        IsAuthenticatedOrReadOnly,
+        IsAuthorAdminModeratorOrReadOnly
+    )
 
     def get_title(self):
         return get_object_or_404(
@@ -29,7 +45,10 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
-    permission_classes = (IsAuthorOrReadOnly,)
+    permission_classes = (
+        IsAuthenticatedOrReadOnly,
+        IsAuthorAdminModeratorOrReadOnly
+    )
 
     def get_review(self):
         return get_object_or_404(
