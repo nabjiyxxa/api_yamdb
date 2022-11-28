@@ -1,22 +1,20 @@
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets, permissions, status
-from rest_framework.response import Response
+from rest_framework import viewsets, permissions
 
 from reviews.models import Title, Review, Category, Genre
 
 from .serializers import (ReviewSerializer, CommentSerializer,
                           TitleReadSerializer, TitleWriteSerializer,
                           CategorySerializer, GenreSerializer)
-from .permissions import (IsAuthorAdminModeratorOrReadOnly,
-                          IsAdminOrReadOnly, IsAuthenticatedOrReadOnly,
-                          IsAuthorOrReadOnly)
+from .permissions import (IsAdminOrReadOnly,
+                          IsAuthorAdminModeratorOrReadOnly)
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = (IsAuthorOrReadOnly)
+    permission_classes = (IsAdminOrReadOnly)
     search_fields = ('=name')
     lookup_field = 'slug'
     # pagination_class = 10
@@ -25,7 +23,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
 class GenreViewSet(viewsets.ModelViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
-    permission_classes = (IsAuthorOrReadOnly)
+    permission_classes = (IsAdminOrReadOnly)
     search_fields = ('=name')
     lookup_field = 'slug'
     # pagination_class = 10
@@ -44,20 +42,10 @@ class TitleViewSet(viewsets.ModelViewSet):
         return TitleWriteSerializer
 
 
-# class TitleViewSet(viewsets.ModelViewSet):
-#     queryset = Title.objects.all()
-#     permission_classes = (IsAuthorOrReadOnly)
-#     serializer_class = TitleSerializer
-#     # pagination_class = 10
-
-#     def update(self, request, *args, **kwargs):
-#         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-
-
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
     permission_classes = (
-        IsAuthenticatedOrReadOnly,
+        permissions.IsAuthenticatedOrReadOnly,
         IsAuthorAdminModeratorOrReadOnly
     )
 
@@ -80,7 +68,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     permission_classes = (
-        IsAuthenticatedOrReadOnly,
+        permissions.IsAuthenticatedOrReadOnly,
         IsAuthorAdminModeratorOrReadOnly
     )
 
