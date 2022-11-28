@@ -2,13 +2,14 @@ from django.shortcuts import get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status, viewsets
 from rest_framework.decorators import action, api_view
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from .models import User
 from .serializers import TokenSerializer, UserSingUpSerializer, UserSerializer
 from .utils import generate_confirmation_code
-from api.permissions import IsAdminPermission, IsUserPermission
+from api.permissions import IsAdmin
 
 
 @api_view(['POST'])
@@ -34,7 +35,8 @@ def user_sing_up(request):
             serializer.data, status=status.HTTP_200_OK
             )
     return Response(
-        'Пользователя с указанной почтой не существует', status=status.HTTP_400_BAD_REQUEST
+        'Пользователя с указанной почтой не существует',
+        status=status.HTTP_400_BAD_REQUEST
     )
 
 
@@ -69,14 +71,14 @@ def get_user_token(request):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = (IsAdminPermission,)
+    permission_classes = (IsAdmin,)
     search_fields = ('=username',)
     lookup_field = 'username'
 
     @action(
         detail=False,
         methods=['GET', 'PATCH'],
-        permission_classes=(IsUserPermission,)
+        permission_classes=(IsAuthenticated,)
     )
     def me(self, request):
         if request.method == 'PATCH':

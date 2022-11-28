@@ -1,9 +1,7 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import serializers
-from rest_framework.validators import UniqueTogetherValidator
 
 from reviews.models import Category, Comment, Genre, Review, Title
-
-from .utils import CurrentTitleDefault
 
 
 REPEAT_REVIEW_ERROR = 'Нельзя добавить повторный отзыв!'
@@ -64,10 +62,6 @@ class ReviewSerializer(serializers.ModelSerializer):
         slug_field='username',
         default=serializers.CurrentUserDefault()
     )
-    title = serializers.HiddenField(
-        read_only=True,
-        default=CurrentTitleDefault()
-    )
 
     def validate_score(self, score):
         if self.context.get('request').method == 'POST':
@@ -79,16 +73,21 @@ class ReviewSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(SCORE_ERROR)
         return score
 
+    def validate(self, data):
+        if self.context.get('request').method == 'POST':
+            if Review.objects.filter(
+                title=get_object_or_404(
+                    Title,
+                    id=self.context['view'].kwargs.get('title_id')
+                ),
+                author=self.context['request'].user
+            ).exists():
+                raise serializers.ValidationError(REPEAT_REVIEW_ERROR)
+        return data
+
     class Meta:
         fields = ('id', 'text', 'author', 'score', 'pub_date')
         model = Review
-        validators = [
-            UniqueTogetherValidator(
-                queryset=Review.objects.all(),
-                fields=('author', 'title'),
-                message=REPEAT_REVIEW_ERROR
-            )
-        ]
 
 
 class CommentSerializer(serializers.ModelSerializer):
