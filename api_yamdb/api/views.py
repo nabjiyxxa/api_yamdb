@@ -1,7 +1,6 @@
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets, permissions
-
+from rest_framework import viewsets, permissions, mixins
 from reviews.models import Title, Review, Category, Genre
 
 from .serializers import (ReviewSerializer, CommentSerializer,
@@ -11,25 +10,29 @@ from .permissions import (IsAdminOrReadOnly,
                           IsAuthorAdminModeratorOrReadOnly)
 
 
-class CategoryViewSet(viewsets.ModelViewSet):
+class ListCreateDestroyViewSet(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.GenericViewSet
+):
+    pass
+
+
+class CategoryViewSet(ListCreateDestroyViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = (IsAdminOrReadOnly)
     search_fields = ('=name')
     lookup_field = 'slug'
-    # pagination_class = 10
 
 
-class GenreViewSet(viewsets.ModelViewSet):
+class GenreViewSet(ListCreateDestroyViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
     permission_classes = (IsAdminOrReadOnly)
     search_fields = ('=name')
     lookup_field = 'slug'
-    # pagination_class = 10
-
-    # def retrieve(self, request, *args, **kwargs):
-    #    return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 class TitleViewSet(viewsets.ModelViewSet):

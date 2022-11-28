@@ -7,7 +7,7 @@ from datetime import datetime
 from django.conf import settings
 
 
-CREATION_YEAR = 1895
+CREATION_YEAR = 1739
 
 
 def validate_year(value):
@@ -21,7 +21,7 @@ def validate_year(value):
         raise ValidationError(
             f'Год выпуска произведения {value} не может быть позже '
             f'настоящего года {year_now}, и раньше даты '
-            f'создания произведение "{CREATION_YEAR}"г.'
+            f'создания произведения "{CREATION_YEAR}"г.'
         )
 
 
@@ -35,7 +35,6 @@ class Category(models.Model):
     class Meta:
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
-        # ordering = ('name',)
 
     def __str__(self):
         return self.name
@@ -51,7 +50,6 @@ class Genre(models.Model):
     class Meta:
         verbose_name = 'Жанр'
         verbose_name_plural = 'Жанры'
-        # ordering = ('name',)
 
     def __str__(self):
         return self.name
@@ -90,12 +88,38 @@ class Title(models.Model):
     )
 
     class Meta:
-        # ordering = ['-id'] не id другое
         verbose_name = "Произведение"
         verbose_name_plural = "Произведения"
 
     def __str__(self):
         return self.name
+
+
+class GenreTitle(models.Model):
+    """
+    Реализована связь МКМ.
+    """
+
+    genre = models.ForeignKey(
+        Genre,
+        related_name='genretitle',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+    )
+    title = models.ForeignKey(
+        Title,
+        related_name='genretitle',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+    )
+
+    class Meta:
+        db_table = 'genre_title'
+
+    def __str__(self):
+        return f'{self.genre.name} {self.title.name}'
 
 
 class Review(models.Model):

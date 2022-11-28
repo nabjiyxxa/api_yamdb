@@ -28,15 +28,24 @@ class GenreSerializer(serializers.ModelSerializer):
 
 class TitleReadSerializer(serializers.ModelSerializer):
     genre = GenreSerializer(many=True)
-    category = CategorySerializer()
-    rating = serializers.IntegerField()
+    category = CategorySerializer(many=False)
+    rating = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
-        FIELDS = ('id', 'name', 'year', 'rating',
-                  'description', 'genre', 'category')
         model = Title
-        fields = FIELDS
-        read_only_fields = FIELDS
+        fields = ('id', 'name', 'year', 'rating',
+                  'description', 'genre', 'category')
+
+    def get_rating(self, obj):
+        """Метод для вычисления средней оценки произведения."""
+        reviews = Review.objects.filter(title=obj.id)
+        total_scores = []
+        for review in reviews:
+            total_scores.append(review.score)
+        if not total_scores:
+            return None
+        rating = round(sum(total_scores) / len(total_scores))
+        return rating
 
 
 class TitleWriteSerializer(serializers.ModelSerializer):
