@@ -32,4 +32,6 @@ class IsAdminOrReadOnly(permissions.BasePermission):
 class IsAdmin(permissions.BasePermission):
     """Доступ только для admin и superuser по всем запросам."""
     def has_permission(self, request, view):
-        return request.user.is_authenticated and request.user.is_admin
+        return (request.user.is_authenticated
+                and (request.user.is_admin or request.user.is_superuser)
+                )
