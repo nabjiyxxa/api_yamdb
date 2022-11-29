@@ -99,24 +99,18 @@ class GenreTitle(models.Model):
     """
     Реализована связь МКМ.
     """
-
     genre = models.ForeignKey(
         Genre,
         related_name='genretitle',
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
+        on_delete=models.CASCADE,
+        verbose_name='Жанр'
     )
     title = models.ForeignKey(
         Title,
         related_name='genretitle',
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
+        on_delete=models.CASCADE,
+        verbose_name='Произведение'
     )
-
-    class Meta:
-        db_table = 'genre_title'
 
     def __str__(self):
         return f'{self.genre.name} {self.title.name}'
