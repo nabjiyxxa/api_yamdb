@@ -58,8 +58,7 @@ class Genre(models.Model):
 class Title(models.Model):
     name = models.CharField(
         'Название произведения',
-        max_length=256,
-        unique=True
+        max_length=256
     )
     year = models.IntegerField(
         'Год выхода',
