@@ -36,6 +36,17 @@ class TitleReadSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'year', 'rating',
                   'description', 'genre', 'category')
 
+    def get_rating(self, obj):
+        """Метод для вычисления усреднённой оценки произведения."""
+        reviews = Review.objects.filter(title=obj.id)
+        total_scores = []
+        for review in reviews:
+            total_scores.append(review.score)
+        if not total_scores:
+            return None
+        rating = round(sum(total_scores) / len(total_scores))
+        return rating
+
 
 class TitleWriteSerializer(serializers.ModelSerializer):
     genre = serializers.SlugRelatedField(
