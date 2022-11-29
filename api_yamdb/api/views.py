@@ -1,8 +1,9 @@
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets, permissions, mixins
-from reviews.models import Title, Review, Category, Genre
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import viewsets, permissions, mixins
+from rest_framework.filters import SearchFilter
+from reviews.models import Title, Review, Category, Genre
 from .filters import TitleFilter
 
 from .serializers import (ReviewSerializer, CommentSerializer,
@@ -25,6 +26,7 @@ class CategoryViewSet(ListCreateDestroyViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = (IsAdminOrReadOnly,)
+    filter_backends = (SearchFilter,)
     search_fields = ('name',)
     lookup_field = 'slug'
 
@@ -33,7 +35,8 @@ class GenreViewSet(ListCreateDestroyViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
     permission_classes = (IsAdminOrReadOnly,)
-    search_fields = ('=name')
+    filter_backends = (SearchFilter,)
+    search_fields = ('name',)
     lookup_field = 'slug'
 
 
@@ -53,7 +56,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
     permission_classes = (
         permissions.IsAuthenticatedOrReadOnly,
-        IsAuthorAdminModeratorOrReadOnly
+        IsAuthorAdminModeratorOrReadOnly,
     )
 
     def get_title(self):
