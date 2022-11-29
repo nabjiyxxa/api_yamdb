@@ -1,8 +1,6 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
-
 from reviews.models import Category, Comment, Genre, Review, Title
-
 
 REPEAT_REVIEW_ERROR = 'Нельзя добавить повторный отзыв!'
 SCORE_ERROR = 'Оценка должна быть целым числом в пределах от 1 до 10!'
@@ -29,12 +27,14 @@ class GenreSerializer(serializers.ModelSerializer):
 class TitleReadSerializer(serializers.ModelSerializer):
     genre = GenreSerializer(many=True)
     category = CategorySerializer(many=False)
-    rating = serializers.SerializerMethodField(read_only=True)
+    rating = serializers.IntegerField()
 
     class Meta:
         model = Title
         fields = ('id', 'name', 'year', 'rating',
                   'description', 'genre', 'category')
+        read_only_fields = ('id', 'name', 'year', 'rating',
+                            'description', 'genre', 'category')
 
 
 class TitleWriteSerializer(serializers.ModelSerializer):

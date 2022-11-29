@@ -1,5 +1,6 @@
-from django.shortcuts import get_object_or_404
+from api.permissions import IsAdmin
 from django.core.exceptions import ObjectDoesNotExist
+from django.shortcuts import get_object_or_404
 from rest_framework import status, viewsets
 from rest_framework.decorators import action, api_view
 from rest_framework.permissions import IsAuthenticated
@@ -7,9 +8,8 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from .models import User
-from .serializers import TokenSerializer, UserSingUpSerializer, UserSerializer
+from .serializers import TokenSerializer, UserSerializer, UserSingUpSerializer
 from .utils import generate_confirmation_code
-from api.permissions import IsAdmin
 
 
 @api_view(['POST'])

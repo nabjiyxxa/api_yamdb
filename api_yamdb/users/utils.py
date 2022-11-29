@@ -1,9 +1,11 @@
-from django.core.mail import send_mail
-from django.shortcuts import get_object_or_404
-from .models import User
 import random
 
+from django.core.mail import send_mail
+from django.shortcuts import get_object_or_404
+
 from api_yamdb.settings import EMAIL_SERVER
+
+from .models import User
 
 
 def generate_confirmation_code(username):
