@@ -42,13 +42,14 @@ class Command(BaseCommand):
             },
         }
         add_fields = {
-                    'password': '',
-                    'is_superuser': '0',
-                    'is_staff': '0',
-                    'is_active': '1',
-                    'date_joined': '',
-                    'confirmation_code': ''
-                }
+            'password': '',
+            'is_superuser': '0',
+            'is_staff': '0',
+            'is_active': '1',
+            'date_joined': '',
+            'confirmation_code': ''
+        }
+
         SQL_QUERY_FORM = 'INSERT INTO {} ({}) VALUES ({});'
 
         sqlite_connection = sqlite3.connect('db.sqlite3')

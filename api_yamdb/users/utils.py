@@ -13,7 +13,7 @@ def generate_confirmation_code(username):
     confirmation_code = str(random.randint(100000, 999999))
     user.confirmation_code = confirmation_code
     send_mail(
-        f'Code for registrations',
+        'Code for registrations',
         f'Код для получения JWT токена {user.confirmation_code}',
         EMAIL_SERVER,
         [user.email],
