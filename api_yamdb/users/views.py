@@ -23,7 +23,7 @@ def user_sing_up(request):
             generate_confirmation_code(username)
             return Response(
                 serializer.data, status=status.HTTP_200_OK
-                )
+            )
         return Response(
             "Вы не можете создать пользователя с таким username.",
             status=status.HTTP_400_BAD_REQUEST,
