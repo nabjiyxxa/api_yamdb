@@ -24,15 +24,15 @@ class ListCreateDestroyViewSet(
 class CategoryViewSet(ListCreateDestroyViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = (IsAdminOrReadOnly)
-    search_fields = ('=name')
+    permission_classes = (IsAdminOrReadOnly,)
+    search_fields = ('name',)
     lookup_field = 'slug'
 
 
 class GenreViewSet(ListCreateDestroyViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
-    permission_classes = (IsAdminOrReadOnly)
+    permission_classes = (IsAdminOrReadOnly,)
     search_fields = ('=name')
     lookup_field = 'slug'
 
@@ -76,7 +76,7 @@ class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     permission_classes = (
         permissions.IsAuthenticatedOrReadOnly,
-        IsAuthorAdminModeratorOrReadOnly
+        IsAuthorAdminModeratorOrReadOnly,
     )
 
     def get_review(self):
