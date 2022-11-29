@@ -18,11 +18,16 @@ def user_sing_up(request):
     if not User.objects.filter(username=username).exists():
         serializer = UserSingUpSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
-        generate_confirmation_code(username)
+        if username != "me":
+            serializer.save()
+            generate_confirmation_code(username)
+            return Response(
+                serializer.data, status=status.HTTP_200_OK
+                )
         return Response(
-            serializer.data, status=status.HTTP_200_OK
-            )
+            "Вы не можете создать пользователя с таким username.",
+            status=status.HTTP_400_BAD_REQUEST,
+        )
     user = get_object_or_404(User, username=username)
     serializer = UserSingUpSerializer(
         user, data=request.data, partial=True
@@ -46,11 +51,6 @@ def get_user_token(request):
     serializer.is_valid(raise_exception=True)
     confirmation_code = serializer.validated_data.get("confirmation_code")
     username = serializer.validated_data['username']
-    if username == "me":
-        return Response(
-            "Вы не можете создать пользователя с таким username.",
-            status=status.HTTP_400_BAD_REQUEST,
-        )
     try:
         user = User.objects.get(username=username)
     except ObjectDoesNotExist:
