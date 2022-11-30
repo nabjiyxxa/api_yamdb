@@ -42,7 +42,7 @@ def get_user_token(request):
     username = serializer.validated_data['username']
     try:
         user = User.objects.get(username=username)
-    except ObjectDoesNotExist:
+    except User.DoesNotExist:
         return Response(
             'Пользователь не найден', status=status.HTTP_404_NOT_FOUND
         )
