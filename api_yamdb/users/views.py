@@ -14,33 +14,24 @@ from .utils import generate_confirmation_code
 
 @api_view(['POST'])
 def user_sing_up(request):
-    username = request.data.get('username')
-    if not User.objects.filter(username=username).exists():
-        serializer = UserSingUpSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        if username != "me":
+    serializer = UserSingUpSerializer(data=request.data)
+    if serializer.is_valid(raise_exception=True) :
+        username = serializer.validated_data['username']
+        email = serializer.validated_data['email']
+        if not User.objects.filter(username=username).exists():
             serializer.save()
-            generate_confirmation_code(username)
-            return Response(
-                serializer.data, status=status.HTTP_200_OK
-            )
-        return Response(
-            "Вы не можете создать пользователя с таким username.",
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-    user = get_object_or_404(User, username=username)
-    serializer = UserSingUpSerializer(
-        user, data=request.data, partial=True
-    )
-    serializer.is_valid(raise_exception=True)
-    if serializer.validated_data['email'] == user.email:
-        serializer.save()
+        else:
+            user = get_object_or_404(User, username=username, email=email)
+            if email == user.email:
+                serializer.save()
+            else:
+                return Response(
+                    'Пользователя с указанной почтой не существует', 
+                    status=status.HTTP_400_BAD_REQUEST 
+                ) 
         generate_confirmation_code(username)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    return Response(
-        'Пользователя с указанной почтой не существует',
-        status=status.HTTP_400_BAD_REQUEST
-    )
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['POST'])
