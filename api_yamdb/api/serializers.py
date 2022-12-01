@@ -1,11 +1,10 @@
+from django.conf import settings
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from reviews.models import Category, Comment, Genre, Review, Title
 
 REPEAT_REVIEW_ERROR = 'Нельзя добавить повторный отзыв!'
 SCORE_ERROR = 'Оценка должна быть целым числом в пределах от 1 до 10!'
-MAX_VALUE_SCORE_VALIDATOR = 10
-MIN_VALUE_SCORE_VALIDATOR = 1
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -13,7 +12,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Category
-        fields = ('name', 'slug')
+        exclude = ['id']
 
 
 class GenreSerializer(serializers.ModelSerializer):
@@ -21,7 +20,7 @@ class GenreSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Genre
-        fields = ('name', 'slug')
+        exclude = ['id']
 
 
 class TitleReadSerializer(serializers.ModelSerializer):
@@ -65,8 +64,8 @@ class ReviewSerializer(serializers.ModelSerializer):
         if self.context.get('request').method == 'POST':
             if (
                 type(score) != int
-                or (score < MIN_VALUE_SCORE_VALIDATOR
-                    or score > MAX_VALUE_SCORE_VALIDATOR)
+                or (score < settings.MIN_VALUE_SCORE_VALIDATOR
+                    or score > settings.MAX_VALUE_SCORE_VALIDATOR)
             ):
                 raise serializers.ValidationError(SCORE_ERROR)
         return score
