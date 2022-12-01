@@ -8,7 +8,7 @@ def validate_year(value):
     """
     Валидатор для проверки года
     """
-    year_now = now = timezone.now().year
+    year_now = timezone.now().year
     if year_now >= value >= CREATION_YEAR:
         return value
     else:
