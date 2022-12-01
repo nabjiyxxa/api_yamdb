@@ -1,28 +1,12 @@
-from datetime import datetime
-
 from django.conf import settings
-from django.core.exceptions import ValidationError
+
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
-CREATION_YEAR = 1739
+from .validators import validate_year
+
 MIN_VALUE_SCORE_ERROR = 'Число не должно быть меньше 1'
 MAX_VALUE_SCORE_ERROR = 'Число не должно быть больше 10'
-
-
-def validate_year(value):
-    """
-    Валидатор для проверки года
-    """
-    year_now = datetime.now().year
-    if year_now >= value >= CREATION_YEAR:
-        return value
-    else:
-        raise ValidationError(
-            f'Год выпуска произведения {value} не может быть позже '
-            f'настоящего года {year_now}, и раньше даты '
-            f'создания произведения "{CREATION_YEAR}"г.'
-        )
 
 
 class Category(models.Model):
@@ -74,7 +58,7 @@ class Title(models.Model):
     category = models.ForeignKey(
         Category,
         on_delete=models.SET_NULL,
-        related_name='category',
+        related_name='titles',
         null=True,
         blank=True,
         verbose_name='Категория произведения'
@@ -82,7 +66,7 @@ class Title(models.Model):
     genre = models.ManyToManyField(
         Genre,
         blank=True,
-        related_name='genres',
+        related_name='titles',
         verbose_name='Жанр'
     )
 
@@ -92,27 +76,6 @@ class Title(models.Model):
 
     def __str__(self):
         return self.name
-
-
-class GenreTitle(models.Model):
-    """
-    Реализована связь МКМ.
-    """
-    genre = models.ForeignKey(
-        Genre,
-        related_name='genretitle',
-        on_delete=models.CASCADE,
-        verbose_name='Жанр'
-    )
-    title = models.ForeignKey(
-        Title,
-        related_name='genretitle',
-        on_delete=models.CASCADE,
-        verbose_name='Произведение'
-    )
-
-    def __str__(self):
-        return f'{self.genre.name} {self.title.name}'
 
 
 class Review(models.Model):
