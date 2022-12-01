@@ -9,6 +9,13 @@ class UserSingUpSerializer(serializers.ModelSerializer):
         model = User
         fields = ('email', 'username')
 
+    def validate_username(self, value):
+        if value == 'me':
+            raise serializers.ValidationError(
+                "Вы не можете создать пользователя  таким username."
+            )
+        return value
+
 
 class TokenSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=150)
@@ -27,3 +34,10 @@ class UserSerializer(serializers.ModelSerializer):
             'bio',
             'role',
         )
+
+    def validate_username(self, value):
+        if value == 'me':
+            raise serializers.ValidationError(
+                "Вы не можете создать пользователя с таким username."
+            )
+        return value
