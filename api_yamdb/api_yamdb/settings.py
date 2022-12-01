@@ -134,3 +134,6 @@ EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails')
 
 EMAIL_SERVER = 'test@admin.com'
+
+MAX_VALUE_SCORE_VALIDATOR = 10
+MIN_VALUE_SCORE_VALIDATOR = 1

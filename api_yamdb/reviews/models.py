@@ -6,6 +6,8 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 CREATION_YEAR = 1739
+MIN_VALUE_SCORE_ERROR = 'Число не должно быть меньше 1'
+MAX_VALUE_SCORE_ERROR = 'Число не должно быть больше 10'
 
 
 def validate_year(value):
@@ -136,8 +138,14 @@ class Review(models.Model):
     score = models.IntegerField(
         'Оценка (от 1 до 10)',
         validators=[
-            MaxValueValidator(10),
-            MinValueValidator(1)
+            MaxValueValidator(
+                settings.MAX_VALUE_SCORE_VALIDATOR,
+                MAX_VALUE_SCORE_ERROR
+            ),
+            MinValueValidator(
+                settings.MIN_VALUE_SCORE_VALIDATOR,
+                MIN_VALUE_SCORE_ERROR
+            )
         ]
     )
     pub_date = models.DateTimeField(
