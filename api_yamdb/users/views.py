@@ -1,5 +1,4 @@
 from api.permissions import IsAdmin
-from django.shortcuts import get_object_or_404
 from rest_framework import status, viewsets
 from rest_framework.decorators import action, api_view
 from rest_framework.permissions import IsAuthenticated
@@ -16,7 +15,6 @@ def user_sing_up(request):
     serializer = UserSingUpSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     username = serializer.validated_data['username']
-    email = serializer.validated_data['email']
     serializer.save()
     generate_confirmation_code(username)
     return Response(serializer.data, status=status.HTTP_200_OK)
